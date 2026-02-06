@@ -8,9 +8,15 @@ export function useAuth() {
             setIsLoggedIn(true);
             return true;
         }else{
-            setIsLoggedIn(false)
+            
             return false;
         }
     }
+
+    const logout = () => {
+        setIsLoggedIn(false);
+    }
+
+    return {isLoggedIn, login, logout};
 
 }

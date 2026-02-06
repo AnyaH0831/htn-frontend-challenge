@@ -1,8 +1,18 @@
 function EventCard({ event }) {
     const formattedDate = new Date(event.start_time).toLocaleString()
+
+    const scrollToEvent = (eventId) => {
+        const element = document.getElementById('event-' + eventId);
+
+        if (element) {
+            element.scrollIntoView({behavior: 'smooth'});
+        }
+    }
   
     return (
-        <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow">
+        <div
+            id={'event-' + event.id}
+            className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow">
             <h3 className="text-xl font-bold mb-2 text-gray-900">{event.name}</h3>
             
             <div className="flex gap-3 mb-3">
@@ -22,6 +32,27 @@ function EventCard({ event }) {
                     </span>
                 ))}
             </div>
+
+            {event.related_events.length > 0 && (
+                <div className = "border-t pt-4">
+                    <span className="text-sm font-semibold text-gray-700">Related Events: </span>
+                    {event.related_events.map((relatedId, index) => {
+                        let comma = '';
+                        if (index < event.related_events.length - 1){
+                            comma = ', ';
+                        }
+                        return (
+                            <button
+                                key = {relatedId}
+                                onClick={() => scrollToEvent(relatedId)}
+                                className="text-sm text-blue-600 hover:underline mx-1"
+                            >Event {relatedId}{comma}</button>
+                        )
+                        
+                    })}
+                </div>
+            )}
+
         </div>
     );
 }
