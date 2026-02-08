@@ -77,9 +77,9 @@ function App() {
   return (
     <div className="min-h-screen bg-black font-mono">
       {/* Navigation Bar */}
-      <nav className="bg-ultrasonic-blue border-b-2 border-neon-pink shadow-sm">
+      <nav className="bg-ultrasonic-blue border-b-2 border-sky-aqua shadow-sm">
         <div className="container mx-auto px-4 py-1 max-w-7xl flex justify-between items-center">
-          <h1 className="text-2xl font-bold font-mono text-vivid-royal drop-shadow-[0_0_2px_#f72585]">Hack the North Events</h1>
+          <h1 className="text-2xl font-bold font-mono text-raspberry-plum drop-shadow-[0_0_2px_#f72585]" style={{WebkitTextStroke: '1px #4cc9f0'}}>Hack the North Events</h1>
           
           <div className="flex items-center gap-4">
             {/* Search Input */}

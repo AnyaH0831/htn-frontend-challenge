@@ -1,5 +1,12 @@
 function EventCard({ event, allEvents, isLoggedIn }) {
-    const formattedDate = new Date(event.start_time).toLocaleString()
+    const formattedDate = new Date(event.start_time).toLocaleString('en-CA', {
+        month: 'short',
+        day: 'numeric',
+        year: 'numeric',
+        hour: 'numeric',
+        minute: '2-digit',
+        hour12: true
+    })
 
     const scrollToEvent = (eventId) => {
         const element = document.getElementById('event-' + eventId);
