@@ -17,6 +17,7 @@ function App() {
   const [debouncedQuery, setDebouncedQuery] = useState('')
   const [currentPage, setCurrentPage] = useState(1);
   const [eventsPerPage, setEventsPerPage] = useState(9);
+  const [highlightedEventId, setHighlightedEventId] = useState(null);
 
   const {isLoggedIn, login, logout} = useAuth();
 
@@ -54,6 +55,11 @@ function App() {
   useEffect(() => {
     setCurrentPage(1);
   }, [debouncedQuery, isLoggedIn, eventsPerPage]);
+
+  // Scroll to top when page changes
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, [currentPage]);
 
   
 
@@ -104,25 +110,75 @@ function App() {
   const indexOfFirstEvent = indexOfLastEvent - eventsPerPage;
   const currentEvents = filteredEvents.slice(indexOfFirstEvent, indexOfLastEvent);
   const totalPages = Math.ceil(filteredEvents.length / eventsPerPage);
+
+  // Handle related event click: navigate to correct page and smooth scroll
+  const handleRelatedEventClick = (eventId) => {
+    const eventIndex = filteredEvents.findIndex(function(e) {
+      return e.id === eventId;
+    });
+
+    if (eventIndex !== -1) {
+      const targetPage = Math.ceil((eventIndex + 1) / eventsPerPage);
+      
+      if (targetPage !== currentPage) {
+        setCurrentPage(targetPage);
+      }
+
+      // Set highlight and scroll
+      setHighlightedEventId(eventId);
+
+      // Wait for page to update before scrolling
+      setTimeout(function() {
+        const element = document.getElementById('event-' + eventId);
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+      }, 100);
+    }
+  };
    
 
   return (
-    <div className="min-h-screen bg-black font-mono">
+    <div 
+      className="min-h-screen bg-black font-mono"
+      onClick={function() { 
+        if (highlightedEventId) {
+          setHighlightedEventId(null);
+        }
+      }}
+    >
       {/* Navigation Bar */}
       <nav className="bg-gray-900 shadow-sm relative">
         <div className="container mx-auto px-4 py-2 max-w-7xl flex flex-wrap justify-between items-center gap-2">
-          <h1 className="text-lg sm:text-xl md:text-2xl font-bold font-mono text-raspberry-plum drop-shadow-[0_0_2px_#f72585]" style={{WebkitTextStroke: '1px #4cc9f0'}}>Hack the North Events</h1>
+          <h1 className="text-lg sm:text-xl md:text-2xl font-bold font-mono text-raspberry-plum drop-shadow-[0_0_2px_#f72585]" style={{WebkitTextStroke: '1px #4cc9f0'}}>
+            <span className="hidden sm:inline">Hack the North Events</span>
+            <span className="sm:hidden">HTN Events</span>
+          </h1>
           
           <div className="flex items-center gap-2 sm:gap-4 ml-auto">
             {/* Search Input */}
             <div className="relative">
+              <svg className="absolute left-2 top-1/2 -translate-y-1/2 w-4 h-4 text-sky-aqua pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              </svg>
               <input
                 type="text"
                 placeholder="Search..."
                 value={searchQuery}
                 onChange={function(e) { setSearchQuery(e.target.value) }}
-                className="w-32 sm:w-48 md:w-64 px-2 sm:px-4 py-1 text-sm bg-gray-800 text-white border border-electric-sapphire rounded focus:outline-none focus:border-neon-pink placeholder-sky-aqua"
+                className="w-32 sm:w-48 md:w-64 pl-8 pr-8 py-1 text-sm bg-gray-800 text-white border border-electric-sapphire rounded focus:outline-none focus:border-neon-pink placeholder-sky-aqua"
               />
+              {searchQuery && (
+                <button
+                  onClick={function() { setSearchQuery('') }}
+                  className="absolute right-2 top-1/2 -translate-y-1/2 text-neon-pink hover:text-raspberry-plum transition-colors"
+                  aria-label="Clear search"
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              )}
             </div>
 
             {/* Login/Logout Button */}
@@ -202,7 +258,14 @@ function App() {
           <>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {currentEvents.map(event => (
-                <EventCard key={event.id} event={event} allEvents={events} isLoggedIn={isLoggedIn} />
+                <EventCard 
+                  key={event.id} 
+                  event={event} 
+                  allEvents={events} 
+                  isLoggedIn={isLoggedIn}
+                  onRelatedEventClick={handleRelatedEventClick}
+                  isHighlighted={highlightedEventId === event.id}
+                />
               ))}
             </div>
 

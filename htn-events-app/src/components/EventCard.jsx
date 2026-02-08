@@ -1,4 +1,4 @@
-function EventCard({ event, allEvents, isLoggedIn }) {
+function EventCard({ event, allEvents, isLoggedIn, onRelatedEventClick, isHighlighted }) {
     const formattedDate = new Date(event.start_time).toLocaleString('en-CA', {
         month: 'short',
         day: 'numeric',
@@ -7,14 +7,6 @@ function EventCard({ event, allEvents, isLoggedIn }) {
         minute: '2-digit',
         hour12: true
     })
-
-    const scrollToEvent = (eventId) => {
-        const element = document.getElementById('event-' + eventId);
-
-        if (element) {
-            element.scrollIntoView({behavior: 'smooth'});
-        }
-    }
 
     const getEventName = (eventId) => {
         const foundEvent = allEvents.find(function(e) {
@@ -48,7 +40,19 @@ function EventCard({ event, allEvents, isLoggedIn }) {
     return (
         <div
             id={'event-' + event.id}
-            className="bg-gray-900 border-2 border-electric-sapphire rounded-lg p-6 shadow-sm hover:border-neon-pink transition-all">
+            className={`bg-gray-900 rounded-lg p-6 shadow-sm transition-all ${
+                isHighlighted 
+                    ? 'border-0 relative' 
+                    : 'border-2 border-electric-sapphire hover:border-neon-pink'
+            }`}
+            style={isHighlighted ? {
+                border: '2px solid transparent',
+                backgroundImage: 'linear-gradient(#1f2937, #1f2937), linear-gradient(90deg, #f72585ff, #4361eeff, #4cc9f0ff, #4361eeff, #f72585ff)',
+                backgroundOrigin: 'border-box',
+                backgroundClip: 'padding-box, border-box',
+                backgroundSize: 'auto, 200% 100%',
+                animation: 'gradient-shift 4s ease infinite'
+            } : {}}>
             <h3 className="text-xl font-bold mb-2 text-sky-aqua">{event.name}</h3>
             
             <div className="flex gap-3 mb-3">
@@ -78,7 +82,7 @@ function EventCard({ event, allEvents, isLoggedIn }) {
                             return (
                                 <button
                                     key = {relatedId}
-                                    onClick={() => scrollToEvent(relatedId)}
+                                    onClick={function() { onRelatedEventClick(relatedId) }}
                                     className="text-sm bg-electric-sapphire text-white px-2 py-1 rounded hover:bg-blue-energy transition-colors"
                                 > {getEventName(relatedId)}</button>
                             )
