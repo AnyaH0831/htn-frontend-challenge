@@ -41,7 +41,7 @@
 
 1. Tailwind v4 Vercel Deployment Failure
       - When I initially tried to deploy the website on Vercel, the CSS/styling does not load due to Tailwind v4 was yet to be compatible with Vercel.
-      - Then I downgraded to Tailwind v3.4.1 instead
+      - Then I downgraded to Tailwind v3.4.1 instead and the issue was resolved
 2. Pagination Broke Related Events
       - The initial logic to lead users to see the related events was a smooth scroll to the related event card.
       - After implemented pagination where there may be multiple pages of events broke the ability to smooth scroll to the event card.
